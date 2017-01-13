@@ -30,7 +30,23 @@ public class Board {
 	    }
 	    public int hamming()                   // number of blocks out of place
 	    {
-	    	return 0;
+	    	int hamming = 0; 
+	    	for (int r=0; r<n; r++ ) {
+	    		for (int c=0; c< n; c++) {
+	    			int val = this.tiles[r][c];
+	    			
+	    			if ( 0 == val)
+	    				continue;
+	    			
+	    			if ( Math.abs( r - (val -1 ) / n ) +  Math.abs( c - (val-1) % n ) > 0 )
+	    				hamming ++;
+	    		}
+	    	}
+	    	
+	    	return hamming;
+
+	    
+	    
 	    }
 	    public int manhattan()                 // sum of Manhattan distances between blocks and goal
 	    {
@@ -138,7 +154,7 @@ public class Board {
     					} else {
     						
     						twinTiles[r][c]  = b.tiles[ r1][c1];
-    						twinTiles[r1][c1] = b.tiles[r1][c1];
+    						twinTiles[r1][c1] = b.tiles[r][c];
     						// swap and return
     						return twinTiles;
     					}

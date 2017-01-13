@@ -1,7 +1,6 @@
 import static org.junit.Assert.*;
 import java.util.List;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.Test;
@@ -17,8 +16,6 @@ public class SolverTest {
 	int [][] tiles3x3_2AB = { {1,2,3}, {4,0,6}, {7, 5, 8 } };
 	int [][] tiles3x3_2BA = { {1,2,3}, {4,0,5}, {7, 8, 6 } };
 	int [][] tiles3x3_2BB = { {1,2,0}, {4,5,3}, {7, 8, 6 } };
-	
-	
 	
 	Board b3x3_0  = new Board( tiles3x3_0 );
 	Board b3x3_1A = new Board( tiles3x3_1A );
@@ -63,15 +60,7 @@ public class SolverTest {
 		int i=0;
 		for( Board sb : s.solution() ) {
 			
-			for(int row=0; row < sb.tiles.length; row ++ ) {
-				if ( !Arrays.equals( sb.tiles[row], steps.get(i)[row] ) ) {
-					System.out.println( "ROW: " + row);
-					System.out.println( "1: " + sb.tiles[row]);
-					System.out.println( "2: " + steps.get(i)[row] );
-				
-					fail( "mismatch");
-				}
-			}
+			assertEquals( sb, new Board( steps.get(i) ) );
 			
 			i = i+1;
 			
@@ -90,6 +79,16 @@ public class SolverTest {
 		
 	}
 	
+	@Test 
+	public void testUnsolvable_One() {
+		Board b = b3x3_1A.twin();
+		
+		assertEquals( b.twin(), b3x3_1A); // check that we expect twin back
+		
+		Solver s = new Solver( b );
+		assertFalse( s.isSolvable() );
+	
+	}
 
 	@Test
 	public void testSolve_Two () {
@@ -128,6 +127,27 @@ public class SolverTest {
 		assertEquals( 2,b3x3_2BA.manhattan() );
 		assertEquals( 2,b3x3_2BB.manhattan() );
 		
+		
+		
+	}
+	
+	@Test
+	public void checkHamming() {
+		
+		assertEquals( 0, b3x3_0.hamming() );
+		
+		assertEquals( 1,b3x3_1A.hamming() );
+		assertEquals( 1,b3x3_1B.hamming() );
+		
+		assertEquals( 2,b3x3_2AA.hamming() );
+		assertEquals( 2,b3x3_2AB.hamming() );
+		assertEquals( 2,b3x3_2BA.hamming() );
+		assertEquals( 2,b3x3_2BB.hamming() );
+		
+		
+		int [][] tiles = { {1,3,2}, {4,6,5}, {7, 8, 0 } };
+		Board b = new Board( tiles );
+		assertEquals( 4, b.hamming() );
 		
 		
 	}

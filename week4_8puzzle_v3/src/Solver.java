@@ -12,12 +12,26 @@ import edu.princeton.cs.algs4.Stack;
 public class Solver {
 	
 	SolverImpl si;
+	SolverImpl si_twin;
 	
     public Solver(Board initial)           // find a solution to the initial board (using the A* algorithm)
     {
     	si = new SolverImpl( initial );
+    	si_twin = new SolverImpl( initial.twin() );
     	
     	while( si.hasNext() ){
+    		if (! si_twin.hasNext()) {
+    			// if twin is solved - we know
+    			// that primary would not be 
+    			if ( si_twin.solved ) {
+    				break;
+    			}
+    			// we exhausted nodes ( as not solvable )
+    			// but let the main solver continue
+    		} else {
+    		
+    			si_twin.next();
+    		}
     		si.next();
     	}
     	
