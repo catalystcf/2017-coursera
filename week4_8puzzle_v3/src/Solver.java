@@ -56,7 +56,7 @@ public class Solver {
 	 *  First, insert the initial search node (the initial board, 0 moves, and a null previous search node) into a priority queue.
 	 *  
 	 */
-	class SolverImpl {
+	private class SolverImpl {
 		
 		MinPQ<SearchNode> minQ;
 		boolean solved = false;
@@ -188,7 +188,7 @@ public class Solver {
 	 *  the number of moves made to reach the board, 
 	 *  and the previous search node. 
  	 */
-	class SearchNode implements Comparable<SearchNode> {
+	private class SearchNode implements Comparable<SearchNode> {
 		
 		Board b;
 		int moves;

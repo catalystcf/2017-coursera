@@ -1,12 +1,13 @@
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 import edu.princeton.cs.algs4.Stack;
 
 public class Board {
 	
-	int n;
-	int [][] tiles;
+	private int n;
+	private int [][] tiles;
 	
 	public Board(int[][] blocks)           // construct a board from an n-by-n array of blocks
 	    {
@@ -24,7 +25,7 @@ public class Board {
 
 	    public int dimension()                 // board dimension n
 	    {
-	    	return 0;
+	    	return this.n;
 	    	
 	    }
 	    public int hamming()                   // number of blocks out of place
@@ -67,21 +68,85 @@ public class Board {
 	    }
 	    public Board twin()                    // a board that is obtained by exchanging any pair of blocks
 	    {
-	    	return null;
+	    	
+	    	BoardHelper b = new BoardHelper( this );
+	    	return new Board( b.twinTiles() );
 	    }
 	    public boolean equals(Object y)        // does this board equal y?
 	    {
-	    	return false;
+	    	Board o = (Board) y;
+	    	
+	    	for ( int row = 0 ; row < this.dimension(); row++) {
+	    		if ( !Arrays.equals( this.tiles[row], o.tiles[row] ))
+	    			return false;
+	    	}
+	    	
+	    	return true;
 	    }
 	    
 	    private class BoardHelper {
 	    	Board b;
+	    	int c0;
+	    	int r0;
 	    	
 	    	BoardHelper( Board b) {
 	    		this.b = b;
 	    	}
 	    	// TODO: merge board function ( twin, neighbors ) here
+
+	    	int [][] copyOfTiles() {
 	    	
+    			int [][] tiles = new int [n] [];
+    			
+    			for (int r =0; r< n; r++ ) {
+    				tiles[r] = new int[n];
+    				for (int c=0; c<n; c++ ) {
+    					tiles[r][c] = this.b.tiles[r][c];
+    				}
+    			}
+    			return tiles;
+	    	}
+	    	
+    		void set0( Board b ) {
+    			
+    			for( int r =0; r<n; r++ ) {
+    				for (int c=0; c<n; c++ ) {
+    					if (b.tiles[r][c] == 0 ) {
+    						this.r0 = r;
+    						this.c0 = c;
+    						
+    						return;
+    					}
+    				}
+    			}
+    			
+    			throw new RuntimeException( "unreachable ");
+    		}
+
+    		int [][] twinTiles() {
+    			
+    			int [][] twinTiles = copyOfTiles();
+    			int r1 = -1, c1 =-1; // swappees.
+    			
+    			for ( int r=0; r < b.n; r++) {
+    				for( int c=0;c < b.n; c++ ) {
+    					if (b.tiles[r][c] == 0) continue;
+    					
+    					if ( r1 == -1 ) {
+    						r1 = r;
+    						c1 = c;
+    					} else {
+    						
+    						twinTiles[r][c]  = b.tiles[ r1][c1];
+    						twinTiles[r1][c1] = b.tiles[r1][c1];
+    						// swap and return
+    						return twinTiles;
+    					}
+    				}
+    			}
+    			
+    			throw new RuntimeException( "Invalid tiles");
+    		}
 	    }
 	    public Iterable<Board> neighbors()     // all neighboring boards
 	    {
