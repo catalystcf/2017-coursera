@@ -11,8 +11,8 @@ import edu.princeton.cs.algs4.Stack;
  */
 public class Solver {
 	
-	SolverImpl si;
-	SolverImpl si_twin;
+	private SolverImpl si;
+	private SolverImpl si_twin;
 	
     public Solver(Board initial)           // find a solution to the initial board (using the A* algorithm)
     {
