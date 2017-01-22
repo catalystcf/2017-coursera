@@ -5,243 +5,234 @@ import java.util.Iterator;
 import edu.princeton.cs.algs4.Stack;
 
 public class Board {
+	private BI bi;
 	
-	private int n;
-	private int [][] tiles;
-	
-	public Board(int[][] blocks)           // construct a board from an n-by-n array of blocks
-	    {
-			this.n = blocks.length;
+	/** Board Impl
+	 * Max size is 128x128
+	 * Hash is 128x128-1 numbers.
+	 *    Each number can be in any of 128x128 positions.
+	 *    16383  -> 128x128 times
+	 *    
+	 *     
+	 *     3x3**/
+	private static class BI {
+		
+		int manhattan;
+		int hamming;
+		char [] tiles;
+		char dimension;
+		char empty;
+		
+		@Override
+		public String toString() {
 			
-			tiles = new int[n][];
-			for (int r=0; r<n; r++ ) {
-				tiles[r] = new int[n];
-				
-				for (int c=0; c< n; c++ ) {
-					tiles[r][c] = blocks[r][c];
-				}
-			}
-	    }                                       // (where blocks[i][j] = block in row i, column j)
-
-	    public int dimension()                 // board dimension n
-	    {
-	    	return this.n;
-	    	
-	    }
-	    public int hamming()                   // number of blocks out of place
-	    {
-	    	int hamming = 0; 
-	    	for (int r=0; r<n; r++ ) {
-	    		for (int c=0; c< n; c++) {
-	    			int val = this.tiles[r][c];
-	    			
-	    			if ( 0 == val)
-	    				continue;
-	    			
-	    			if ( Math.abs( r - (val -1 ) / n ) +  Math.abs( c - (val-1) % n ) > 0 )
-	    				hamming ++;
-	    		}
-	    	}
-	    	
-	    	return hamming;
-
-	    
-	    
-	    }
-	    public int manhattan()                 // sum of Manhattan distances between blocks and goal
-	    {
-	    	int manh = 0;
-	    	
-	    	for (int r=0; r<n; r++ ) {
-	    		for (int c=0; c< n; c++) {
-	    			int val = this.tiles[r][c];
-	    			
-	    			if ( 0 == val)
-	    				continue;
-	    			
-	    			manh += Math.abs( r - (val -1 ) / n );
-	    			manh += Math.abs( c - (val-1) % n );
- 
-	    		}
-	    	}
-	    	
-	    	return manh;
-	    }
-	    public boolean isGoal()                // is this board the goal board?
-	    {
-	    	int val = 0;
-	    	for (int r=0; r<n; r++) {
-	    		for (int c=0; c<n; c++) {
-	    			val++;
-	    			if (c == n-1 && r == n-1 && this.tiles[r][c]== 0 ) return true; // last cell
-	    			if ( tiles[r][c] != val )
-	    				return false;
-	    		}
-	    	}
-	    	
-	    	throw new RuntimeException( "not reachable");
-	    	
-	    }
-	    public Board twin()                    // a board that is obtained by exchanging any pair of blocks
-	    {
-	    	
-	    	BoardHelper b = new BoardHelper( this );
-	    	return new Board( b.twinTiles() );
-	    }
-	    public boolean equals(Object y)        // does this board equal y?
-	    {
-	    	Board o = (Board) y;
-	    	
-	    	for ( int row = 0 ; row < this.dimension(); row++) {
-	    		if ( !Arrays.equals( this.tiles[row], o.tiles[row] ))
-	    			return false;
-	    	}
-	    	
-	    	return true;
-	    }
-	    
-	    private class BoardHelper {
-	    	Board b;
-	    	int c0;
-	    	int r0;
-	    	
-	    	BoardHelper( Board b) {
-	    		this.b = b;
-	    	}
-	    	// TODO: merge board function ( twin, neighbors ) here
-
-	    	int [][] copyOfTiles() {
-	    	
-    			int [][] tiles = new int [n] [];
-    			
-    			for (int r =0; r< n; r++ ) {
-    				tiles[r] = new int[n];
-    				for (int c=0; c<n; c++ ) {
-    					tiles[r][c] = this.b.tiles[r][c];
-    				}
-    			}
-    			return tiles;
-	    	}
-	    	
-    		void set0( Board b ) {
-    			
-    			for( int r =0; r<n; r++ ) {
-    				for (int c=0; c<n; c++ ) {
-    					if (b.tiles[r][c] == 0 ) {
-    						this.r0 = r;
-    						this.c0 = c;
-    						
-    						return;
-    					}
-    				}
-    			}
-    			
-    			throw new RuntimeException( "unreachable ");
-    		}
-
-    		int [][] twinTiles() {
-    			
-    			int [][] twinTiles = copyOfTiles();
-    			int r1 = -1, c1 =-1; // swappees.
-    			
-    			for ( int r=0; r < b.n; r++) {
-    				for( int c=0;c < b.n; c++ ) {
-    					if (b.tiles[r][c] == 0) continue;
-    					
-    					if ( r1 == -1 ) {
-    						r1 = r;
-    						c1 = c;
-    					} else {
-    						
-    						twinTiles[r][c]  = b.tiles[ r1][c1];
-    						twinTiles[r1][c1] = b.tiles[r][c];
-    						// swap and return
-    						return twinTiles;
-    					}
-    				}
-    			}
-    			
-    			throw new RuntimeException( "Invalid tiles");
-    		}
-	    }
-	    public Iterable<Board> neighbors()     // all neighboring boards
-	    {
-	    	class IB implements Iterable<Board> {
-	    		
-	    		Stack<Board> neighbors = new Stack<Board>();
-	    		int r0;
-	    		int c0;
-	    		
-	    		void set0( Board b ) {
-	    			
-	    			for( int r =0; r<n; r++ ) {
-	    				for (int c=0; c<n; c++ ) {
-	    					if (b.tiles[r][c] == 0 ) {
-	    						this.r0 = r;
-	    						this.c0 = c;
-	    						
-	    						return;
-	    					}
-	    				}
-	    			}
-	    			
-	    			throw new RuntimeException( "unreachable ");
-	    		}
-	    		
-	    		void addNeigbor( Board b,int newR0, int newC0) {
-	    			
-	    			if (newR0 >= n || newC0 >= n || newR0 <0 || newC0 <0 )
-	    				return; 
-	    			
-	    			int [][] tiles = new int [n] [];
-	    			
-	    			for (int r =0; r< n; r++ ) {
-	    				tiles[r] = new int[n];
-	    				for (int c=0; c<n; c++ ) {
-	    					tiles[r][c] = b.tiles[r][c];
-	    				}
-	    			}
-	    			
-	    			tiles[r0][c0] =b.tiles[newR0][newC0];
-	    			tiles[newR0][newC0] = b.tiles[r0][c0];
-	    		
-	    			Board nb = new Board(tiles);
-	    			
-	    			neighbors.push(nb);
-	    		}
-	    		
-	    		IB( Board b) {
-	    			
-	    			this.set0( b);
-	    			
-	    			addNeigbor( b, r0+1, c0);
-	    			addNeigbor( b, r0-1, c0);
-	    			addNeigbor( b, r0  , c0 + 1);
-	    			addNeigbor( b, r0  , c0 - 1);
-	    			
-	    		} 
-	    		
-				@Override
-				public Iterator<Board> iterator() {
-					// TODO Auto-generated method stub
-					return neighbors.iterator();
-				}
-	    		
-	    	}
-	    	
-	    	return new IB(this);
-	    }
-	    
-	    public String toString() {
-	        StringBuilder s = new StringBuilder();
-	        s.append(n + "\n");
+			StringBuilder s = new StringBuilder();
+			int n = (int) dimension;
+	        s.append( n + "\n");
+	        int x = 0;
 	        for (int i = 0; i < n; i++) {
 	            for (int j = 0; j < n; j++) {
-	                s.append(String.format("%2d ", tiles[i][j]));
+	                s.append(String.format("%2d ", tiles[x]));
+	                x++;
 	            }
 	            s.append("\n");
 	        }
 	        return s.toString();
+		}
+		
+		
+		@Override
+		public boolean equals(Object obj) {
+			
+			BI o = (BI) obj; // who else will call it?
+			
+			if (o.dimension != this.dimension ||
+					o.empty != this.empty ||
+					o.manhattan != this.manhattan ||
+					o.hamming != this.hamming)
+				return false;
+			
+			return Arrays.equals(o.tiles, this.tiles);
+					
+			
+		}
+		
+		
+		BI( int [][] blocks ) {
+			
+			this.dimension = (char) blocks.length;
+			tiles  = new char[ this.dimension * this.dimension ];
+			
+			this.hamming = 0;
+			this.manhattan = 0;
+			char index = 0;
+			
+			for( int r=0; r < this.dimension; r++) {
+				for( int c = 0; c < this.dimension; c++ ) {
+					
+					this.tiles[index] = (char) blocks[r][c];
+					
+					if (this.tiles[index] == 0) 
+						this.empty = index;
+					
+					if ( this.tiles[index] != index + 1 && this.tiles[index] != 0 )
+					{
+						this.hamming = this.hamming + 1;
+					
+						// for manhanttan, we need to figure out instead where the value should be
+		    			this.manhattan += Math.abs( r - (this.tiles[index]-1)  / this.dimension );
+		    			this.manhattan += Math.abs( c - (this.tiles[index]-1) %  this.dimension  );
+						
+					}
+					
+					index ++;
+				}
+			}
+			
+			
+		}
+		
+		boolean isGoal() {
+		
+			return hamming ==0;
+		}
+		
+		int [][] copyTiles() {
+			
+			int [][] tblocks = new int[ this.dimension ][];
+			for(int r =0; r< this.dimension; r++) {
+				tblocks[r] = new int[ this.dimension];
+				
+				for(int c=0; c<this.dimension; c++ ){
+					tblocks[r][c] = this.tiles[ r*this.dimension + c];
+				}
+			}
+			return tblocks;
+		}
+				
+		int [][] neighbourTiles( int dR, int dC ) {
+			
+			int r =(this.empty) / this.dimension;
+			int c =(this.empty) % this.dimension;
+			
+			int r1 = r+ dR;
+			int c1 = c + dC;
+			
+			if (r1 <0 || c1<0  || r1 >= this.dimension ||  c1 >= this.dimension)
+				return null;
+			
+			int [][] tblock = copyTiles();
+			
+			int temp = tblock[r][c];
+			tblock[r][c] = tblock[r1][c1];
+			tblock[r1][c1] = temp;
+			
+			return tblock;
+			
+		}
+			
+		int [][] twinTiles( )
+		{
+			int [][] tblocks = this.copyTiles();
+		
+			int r1 = -1;
+			int c1 = -1;
+			for(int r =0; r< this.dimension; r++) {
+				
+				for(int c=0; c<this.dimension; c++ ){
+					
+					if ( tblocks[r][c] == 0 ) continue;
+					
+					if ( r1 == -1){
+						r1 = r;
+						c1 = c;
+						continue;
+					} else {
+						int temp = tblocks[r][c];
+						tblocks[r][c]= tblocks[r1][c1];
+						tblocks[r1][c1] = temp;
+						return tblocks;
+					}	
+				}
+			}
+			throw new RuntimeException( "not reachable" );
+			
+			
+		}
+		
+	}
+	
+	
+	
+	
+	
+	public Board(int[][] blocks)           // construct a board from an n-by-n array of blocks
+	{
+		this.bi = new BI( blocks );
+	}                                       // (where blocks[i][j] = block in row i, column j)
+
+	public int dimension()                 // board dimension n
+	{
+		return (int) this.bi.dimension;
+	    	
+	}
+	public int hamming()                   // number of blocks out of place
+	{
+		return this.bi.hamming;
+	}
+	public int manhattan()                 // sum of Manhattan distances between blocks and goal
+	{
+		return this.bi.manhattan;
+	}
+	
+		
+	    public boolean isGoal()                // is this board the goal board?
+	    {
+	    	return this.bi.isGoal();
+	    	
+	    }
+	    public Board twin()                    // a board that is obtained by exchanging any pair of blocks
+	    {
+	    	return new Board( this.bi.twinTiles() );
+	    }
+	    public boolean equals(Object y)        // does this board equal y?
+	    {
+	    	if (null == y) {
+	    		return false;
+	    	}
+	    	
+	    	if ( !(y instanceof Board) ) {
+	    		return false;
+	    	}
+	    	Board o = (Board) y;
+	    	
+	    	return o.bi.equals( this.bi);
+	    }
+	    public Iterable<Board> neighbors()     // all neighboring boards
+	    {
+	    	Stack<Board> it = new Stack<Board>();
+	
+	    	addNeigbour(it,  1,  0);
+	    	addNeigbour(it, -1,  0);
+	    	addNeigbour(it,  0,  1);
+	    	addNeigbour(it,  0, -1);
+	
+			return it;
+	    }
+	    
+	    private void addNeigbour( Stack<Board> it, int dR, int dC )
+	    {	
+	    	int [][] tiles = bi.neighbourTiles( dR, dC);
+	    	if ( null == tiles) return;
+	    	
+	    	Board nb = new Board(tiles);
+	    	it.push(nb);
+	    }
+	    
+	    public String toString() {
+	    	
+	    	return bi.toString();
+	    	
 	    }
 	    
 	

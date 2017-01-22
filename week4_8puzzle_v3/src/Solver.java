@@ -44,11 +44,16 @@ public class Solver {
     
     public int moves()                     // min number of moves to solve initial board; -1 if unsolvable
     {
-    	return this.si.currentNode.moves;
+    	if (this.si.solved)
+    		return this.si.currentNode.moves;
+    	else
+    		return -1;
     }
     
     public Iterable<Board> solution()      // sequence of boards in a shortest solution; null if unsolvable
     {
+    	if (!this.si.solved) return null;
+    			 
     	Stack<Board> solutionStack = new Stack<Board>();
     	
     	SearchNode sn = this.si.currentNode;
@@ -87,6 +92,7 @@ public class Solver {
 			minQ = new MinPQ<SearchNode>();
 			minQ.insert(initNode);
 			
+			
 			currentNode = initNode;
 		}
 		/**
@@ -107,9 +113,6 @@ public class Solver {
             4  2  5     
             7  8  6  
 			 */
-			
-			
-			
 			SearchNode prevNode = this.currentNode;
 			this.currentNode = minQ.delMin();
 			
@@ -120,7 +123,7 @@ public class Solver {
 			
 			for( Board nb : this.currentNode.b.neighbors() ) {
 				if ( nb.equals( prevNode.b )) continue; 	
-				minQ.insert( new SearchNode( nb, this.currentNode.moves+1, prevNode ));
+				minQ.insert( new SearchNode( nb, this.currentNode.moves+1, currentNode ));
 			}
 
 			printStep();			
