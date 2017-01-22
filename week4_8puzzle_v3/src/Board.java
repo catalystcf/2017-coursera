@@ -32,7 +32,7 @@ public class Board {
 	        int x = 0;
 	        for (int i = 0; i < n; i++) {
 	            for (int j = 0; j < n; j++) {
-	                s.append(String.format("%2d ", tiles[x]));
+	                s.append(String.format("%2d ", (int) tiles[x]));
 	                x++;
 	            }
 	            s.append("\n");

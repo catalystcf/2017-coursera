@@ -33,6 +33,13 @@ public class SolverTest {
 		assertTrue(s.isSolvable() );
 		assertEquals( expectedMoves, s.moves());
 		
+		int ms =0;
+		for (Board bs:s.solution()) {
+			ms++;
+		}
+		
+		assertEquals( ms, s.moves() + 1 );
+		
 	}
 	
 	/**
@@ -87,6 +94,8 @@ public class SolverTest {
 		
 		Solver s = new Solver( b );
 		assertFalse( s.isSolvable() );
+		
+		assertNull( s.solution() );
 	
 	}
 
@@ -119,6 +128,9 @@ public class SolverTest {
 		
 		assertEquals( 0, b3x3_0.manhattan() );
 		
+		Board b = new Board( tiles3x3_2AB );
+		
+		
 		assertEquals( 1,b3x3_1A.manhattan() );
 		assertEquals( 1,b3x3_1B.manhattan() );
 		
@@ -150,6 +162,35 @@ public class SolverTest {
 		assertEquals( 4, b.hamming() );
 		
 		
+	}
+	
+	@Test
+	public void test_BoardEquals( ) {
+		
+		Board b3x3_0_1  = new Board( tiles3x3_0 );
+		
+		assertEquals( b3x3_0_1, b3x3_0 );
+		assertNotEquals( b3x3_0, null );
+		assertNotEquals( b3x3_0, "blah" );
+		
+		
+		
+	}
+	
+	@Test 
+	public void test_BigNumber() {
+		System.out.println( 128 * 128 );
+		System.out.println( Math.pow( 2, 7*4 ) );
+		System.out.println( Character.MAX_VALUE);
+		
+		System.out.println( (128*128-1) * 128*128 );
+	}
+	
+	@Test
+	public void test_BoardToString() {
+		
+		assertEquals( b3x3_0.toString(), "3\n" +
+				" 1  2  3 \n 4  5  6 \n 7  8  0 \n");
 	}
 	
 		
