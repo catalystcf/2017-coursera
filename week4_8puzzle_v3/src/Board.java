@@ -1,6 +1,5 @@
 
 import java.util.Arrays;
-import java.util.Iterator;
 
 import edu.princeton.cs.algs4.Stack;
 
@@ -93,7 +92,7 @@ public class Board {
 		}
 		
 		boolean isGoal() {
-		
+			
 			return hamming ==0;
 		}
 		
@@ -168,35 +167,42 @@ public class Board {
 	
 	public Board(int[][] blocks)           // construct a board from an n-by-n array of blocks
 	{
+		//InvCounter.tick( "Board");
 		this.bi = new BI( blocks );
 	}                                       // (where blocks[i][j] = block in row i, column j)
 
 	public int dimension()                 // board dimension n
 	{
+		//InvCounter.tick( "dimension");
 		return (int) this.bi.dimension;
 	    	
 	}
 	public int hamming()                   // number of blocks out of place
 	{
+		//InvCounter.tick("Hamming");
 		return this.bi.hamming;
 	}
 	public int manhattan()                 // sum of Manhattan distances between blocks and goal
 	{
+		//InvCounter.tick("Manhattan");
 		return this.bi.manhattan;
 	}
 	
 		
 	    public boolean isGoal()                // is this board the goal board?
 	    {
+	    	//InvCounter.tick( "IsGoal");
 	    	return this.bi.isGoal();
 	    	
 	    }
 	    public Board twin()                    // a board that is obtained by exchanging any pair of blocks
 	    {
+	    	//InvCounter.tick( "twin");
 	    	return new Board( this.bi.twinTiles() );
 	    }
 	    public boolean equals(Object y)        // does this board equal y?
 	    {
+	    	//InvCounter.tick( "Equals");
 	    	if (null == y) {
 	    		return false;
 	    	}
@@ -210,6 +216,7 @@ public class Board {
 	    }
 	    public Iterable<Board> neighbors()     // all neighboring boards
 	    {
+	    	//InvCounter.tick( "neighbors");
 	    	Stack<Board> it = new Stack<Board>();
 	
 	    	addNeigbour(it,  1,  0);
@@ -231,6 +238,7 @@ public class Board {
 	    
 	    public String toString() {
 	    	
+	    	//InvCounter.tick( "toString");
 	    	return bi.toString();
 	    	
 	    }

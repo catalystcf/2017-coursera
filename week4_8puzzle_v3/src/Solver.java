@@ -13,6 +13,10 @@ public class Solver {
 	
 	private SolverImpl si;
 	private SolverImpl si_twin;
+	private Boolean isSolved = null;
+	private int moves = -1;
+
+	private Stack<Board> solutionStack; ;
 	
     public Solver(Board initial)           // find a solution to the initial board (using the A* algorithm)
     {
@@ -20,53 +24,65 @@ public class Solver {
     	si_twin = new SolverImpl( initial.twin() );
     	
     	while( si.hasNext() ){
-    		if (! si_twin.hasNext()) {
-    			// if twin is solved - we know
-    			// that primary would not be 
-    			if ( si_twin.solved ) {
-    				break;
+    		if ( null != si_twin ) {
+    			if (si_twin.hasNext()) {
+    				si_twin.next();
+    			} else {
+    				// if twin is solved - we know
+    				// that primary would not be 
+    				if ( si_twin.solved ) {
+    					isSolved = false;
+    					si=null;
+    					si_twin = null;
+    					return;
+    				} 
+    				
+    				isSolved = true;
+    				si_twin = null;
     			}
-    			// we exhausted nodes ( as not solvable )
-    			// but let the main solver continue
-    		} else {
-    		
-    			si_twin.next();
     		}
     		si.next();
     	}
+    	
+    	if ( !this.si.currentNode.b.isGoal() )  {
+    		this.moves = -1;
+    		this.isSolved = false;
+    	} else {
+    		
+    		this.moves = this.si.currentNode.moves;
+    		this.solutionStack = new Stack<Board>();
+    		this.isSolved = true;
+			 
+	    	SearchNode sn = this.si.currentNode;
+	    	
+	    	while( null != sn) {
+	    		solutionStack.push( sn.b );
+	    		sn = sn.prev;
+	    		
+	    	}
+    	}	
+    	
+    	si_twin = null;
+    	si = null;
     	
     }
     
     public boolean isSolvable()            // is the initial board solvable?
     {
-    	return this.si.solved;
+    	return this.isSolved;
     }
     
     public int moves()                     // min number of moves to solve initial board; -1 if unsolvable
     {
-    	if (this.si.solved)
-    		return this.si.currentNode.moves;
-    	else
-    		return -1;
+    	return this.moves;
     }
     
     public Iterable<Board> solution()      // sequence of boards in a shortest solution; null if unsolvable
     {
-    	if (!this.si.solved) return null;
-    			 
-    	Stack<Board> solutionStack = new Stack<Board>();
-    	
-    	SearchNode sn = this.si.currentNode;
-    	
-    	while( null != sn) {
-    		solutionStack.push( sn.b );
-    		sn = sn.prev;
-    	}
-    	
-    	return solutionStack;
+    	if (!this.isSolved) return null;
     	
     	
-    	
+    	return solutionStack;	
     }
 	
 	
@@ -122,7 +138,12 @@ public class Solver {
 			}
 			
 			for( Board nb : this.currentNode.b.neighbors() ) {
-				if ( nb.equals( prevNode.b )) continue; 	
+				if ( nb.equals( prevNode.b )) 
+				{
+					// throw new RuntimeException( "YES");
+					continue; 	
+				}
+								
 				minQ.insert( new SearchNode( nb, this.currentNode.moves+1, currentNode ));
 			}
 
@@ -209,21 +230,39 @@ public class Solver {
 		
 		Board b;
 		int moves;
+		int score;
 		SearchNode prev;
 		
 		SearchNode( Board b, int moves, SearchNode prev) {
+			////InvCounter.tick( "SearchNode");
 			this.b = b;
 			this.moves = moves;
 			this.prev = prev;
+			this.score = b.manhattan() + moves;
 		}
 		
 		private int score() {
-			return this.b.manhattan() + this.moves;
+			return this.score;
 		}
 
 		@Override
 		public int compareTo(SearchNode o) {
-			return this.score() - o.score();
+			int diff = this.score() - o.score();
+			if ( diff !=  0 ) 
+				return diff;
+			
+			diff = this.b.manhattan() - o.b.manhattan();
+			if (diff != 0) return diff;
+			
+			diff = this.b.hamming() - o.b.hamming();
+			if ( diff !=0 ) return diff;
+			
+			diff = o.moves - this.moves;
+			if (diff !=0 ) return diff;
+			
+			return 0;
+				
+			
 		}
 		
 	}
