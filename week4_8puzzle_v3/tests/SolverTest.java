@@ -17,6 +17,14 @@ public class SolverTest {
 	int [][] tiles3x3_2BA = { {1,2,3}, {4,0,5}, {7, 8, 6 } };
 	int [][] tiles3x3_2BB = { {1,2,0}, {4,5,3}, {7, 8, 6 } };
 	
+	int [][] tiles3x3_2BB_1 = { {1,0,2}, {4,5,3}, {7, 8, 6 } };
+	int [][] tiles3x3_2BB_2 = { {1,5,2}, {4,0,3}, {7, 8, 6 } };
+	int [][] tiles3x3_2BB_3 = { {1,5,2}, {4,8,3}, {7, 0, 6 } };
+	int [][] tiles3x3_2BB_4 = { {1,5,2}, {4,8,3}, {7, 6, 0 } };
+	
+	
+	
+	
 	Board b3x3_0  = new Board( tiles3x3_0 );
 	Board b3x3_1A = new Board( tiles3x3_1A );
 	Board b3x3_1B = new Board( tiles3x3_1B );
@@ -26,6 +34,16 @@ public class SolverTest {
 	Board b3x3_2BA = new Board( tiles3x3_2BA );
 	Board b3x3_2BB = new Board( tiles3x3_2BB );
 	
+	
+	@Test
+	public void test_solveMore(){
+		
+		Board b = new Board( this.tiles3x3_2BB_4);
+		Solver s = new Solver( b);
+		assertTrue( s.isSolvable());
+		
+		System.out.println(s.moves());
+	}
 	
 	
 	private void checkSolve( Board b, int expectedMoves) {
