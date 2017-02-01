@@ -91,6 +91,28 @@ public class Point implements Comparable<Point> {
         return this.x - that.x;
         
     }
+    
+    private class PC implements Comparator<Point> {
+    	Point p;
+    	
+    	PC( Point p) {
+    		this.p = p;
+    	}
+    	
+		@Override
+		public int compare(Point o1, Point o2) {
+		
+			double s1 = this.p.slopeTo(o1);
+			double s2 = this.p.slopeTo(o2);
+			
+			if (s1 > s2 )
+				return 1;
+			if ( s1 < s2 )
+				return -1;
+			
+			return 0;		
+		}
+    }
 
     /**
      * Compares two points by the slope they make with this point.
@@ -99,8 +121,8 @@ public class Point implements Comparable<Point> {
      * @return the Comparator that defines this ordering on points
      */
     public Comparator<Point> slopeOrder() {
-        /* YOUR CODE HERE */
-    	
+        	
+    	return  new PC( this );
     	
     }
 

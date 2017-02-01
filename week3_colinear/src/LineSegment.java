@@ -48,6 +48,17 @@ public class LineSegment {
     public String toString() {
         return p + " -> " + q;
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+    	if (  ! ( obj instanceof LineSegment ) ) {
+    		return false;
+    	}
+    	
+    	LineSegment other = (LineSegment ) obj;
+    
+    	return this.p.slopeTo( this.q ) == other.q.slopeTo( other.p );
+    }
 
     /**
      * Throws an exception if called. The hashCode() method is not supported because
